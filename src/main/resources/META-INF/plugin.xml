@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>cn.llanc.codedictionary</id>
+    <name>CodeDictionary</name>
+    <vendor email="mail@llanc.cn" url="http://www.llanc.cn">llanc.cn</vendor>
+
+    <description><![CDATA[
+    代码词典-带着词典去开发
+    如果你在开发中需要经常Google知识点，那么这就是适合你的一款插件。
+    在日常开发中记录值得记录的代码片段或知识点，帮助你日后快速查看和复用。
+    打造一本属于自己的快速开发“词典”
+    ]]></description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="CodeDictionary_PopupAction" class="cn.llanc.codedictionary.action.PopupAction" text="添加词条" description="为选中代码添加选词条">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl S"/>
+        </action>
+    </actions>
+</idea-plugin>
