@@ -1,8 +1,8 @@
 package cn.llanc.codedictionary.globle.constant;
 
 /**
- * @author liulancong
- * @ClassName LableConstants
+ * @author Langel
+ * @ClassName ConstantsEnum
  * @Description 常量枚举类
  * @date 2020/8/13
  **/

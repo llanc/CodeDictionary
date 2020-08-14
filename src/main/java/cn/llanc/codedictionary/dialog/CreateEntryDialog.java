@@ -13,7 +13,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 /**
- * @author liulancong
+ * @author Langel
  * @ClassName CreateEntryDialog
  * @Description 创建条目弹窗
  * @date 2020/8/13
@@ -33,7 +33,7 @@ public class CreateEntryDialog extends DialogWrapper {
     /**
      * 代码段
      */
-    private JTextArea entryCode;
+    private JTextArea entryContent;
 
     /**
      * 条目解释滚动面板
@@ -49,9 +49,13 @@ public class CreateEntryDialog extends DialogWrapper {
 
     /**
      * 构造方法，指定title
+     * @param selectedText 选中的代码段
      */
-    public CreateEntryDialog() {
+    public CreateEntryDialog(String selectedText) {
         super(true);
+        initEntryName();
+        initEntryDesc();
+        initEntryCode(selectedText);
         init();
         setTitle(CreateEntry.TITLE.getValue());
         // 绑定事件
@@ -61,9 +65,6 @@ public class CreateEntryDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         JPanel panel = new JPanel(new BorderLayout(10,10));
-        initEntryName();
-        initEntryDesc();
-        initEntryCode();
         panel.add(entryName, BorderLayout.NORTH);
         panel.add(descScrollPane, BorderLayout.CENTER);
         panel.add(codeScrollPane, BorderLayout.SOUTH);
@@ -130,11 +131,12 @@ public class CreateEntryDialog extends DialogWrapper {
     }
 
     /**
-     *
+     * 初始化条目代码
+     * @param selectedText 选中的代码段
      */
-    private void initEntryCode() {
-        entryCode = new JTextArea();
-        codeScrollPane = new JBScrollPane(entryCode);
+    private void initEntryCode(String selectedText) {
+        entryContent = new JTextArea(selectedText);
+        codeScrollPane = new JBScrollPane(entryContent);
         codeScrollPane.setPreferredSize(new Dimension(400,200));
         codeScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         codeScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);

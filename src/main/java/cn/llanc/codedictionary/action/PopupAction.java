@@ -19,6 +19,6 @@ public class PopupAction extends AnAction {
         String selectedText = selectionModel.getSelectedText();
         System.out.println(selectedText);
         // 创建条目
-        new CreateEntryDialog().show();
+        new CreateEntryDialog(selectedText).show();
     }
 }
