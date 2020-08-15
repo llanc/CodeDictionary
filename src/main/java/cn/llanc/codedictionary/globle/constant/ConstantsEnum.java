@@ -37,6 +37,50 @@ public class ConstantsEnum {
         }
     }
 
+    /**
+     * 条目类型
+     */
+    public enum EntryType{
+        JAVA("java"),
+        SQL("sql"),
+        XML("xml"),
+        HTML("html"),
+        CSS("css"),
+        JS("js"),
+        SHELL("shell"),
+        JSON("json"),
+        TXT("txt"),
+        ;
+        private final String value;
+
+        EntryType(String entryType) {
+            this.value = entryType;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    /**
+     * 条目类型
+     */
+    public enum EntryInfoTable{
+        NAME("名称"),
+        DESC("解释"),
+        CONTENT("内容"),
+        ;
+        private final String value;
+
+        EntryInfoTable(String entryType) {
+            this.value = entryType;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
     private ConstantsEnum() {
 
     }

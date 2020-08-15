@@ -1,5 +1,7 @@
 package cn.llanc.codedictionary.entity;
 
+import cn.hutool.core.date.DateUtil;
+
 /**
  * @author Langel
  * @ClassName CodeDictionaryEntryData
@@ -7,6 +9,7 @@ package cn.llanc.codedictionary.entity;
  * @date 2020/8/14
  **/
 public class CodeDictionaryEntryData {
+
 
     /**
      * 条目名称
@@ -24,9 +27,14 @@ public class CodeDictionaryEntryData {
     private String content;
 
     /**
-     * 内容格式
+     * 条目类别
      */
-    private String contentFormat;
+    private String contentType;
+
+    /**
+     * 创建时间
+     */
+    private String createData;
 
     public String getName() {
         return name;
@@ -52,21 +60,41 @@ public class CodeDictionaryEntryData {
         this.content = content;
     }
 
-    public String getContentFormat() {
-        return contentFormat;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setContentFormat(String contentFormat) {
-        this.contentFormat = contentFormat;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public CodeDictionaryEntryData() {
+    }
+
+    public String getCreateData() {
+        return createData;
+    }
+
+    public void setCreateData(String createData) {
+        this.createData = createData;
+    }
+
+    public CodeDictionaryEntryData(String name, String desc, String content, String contentType) {
+        this.name = name;
+        this.desc = desc;
+        this.content = content;
+        this.contentType = contentType;
+        this.createData = DateUtil.date().toDateStr();
     }
 
     @Override
     public String toString() {
         return "CodeDictionaryEntryData{" +
-                "name='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
                 ", content='" + content + '\'' +
-                ", contentFormat='" + contentFormat + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", createData='" + createData + '\'' +
                 '}';
     }
 }

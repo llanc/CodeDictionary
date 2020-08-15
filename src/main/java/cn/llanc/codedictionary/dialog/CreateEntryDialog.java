@@ -1,7 +1,10 @@
 package cn.llanc.codedictionary.dialog;
 
 import cn.hutool.core.util.StrUtil;
+import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum.CreateEntry;
+import cn.llanc.codedictionary.globle.data.EntryDataCenter;
+import cn.llanc.codedictionary.globle.utils.GlobleUtils;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
@@ -26,6 +29,10 @@ public class CreateEntryDialog extends DialogWrapper {
     private JTextField entryName;
 
     /**
+     * 条目类型
+     */
+    private JComboBox entryContentType;
+    /**
      * 条目解释
      */
     private JTextArea entryDesc;
@@ -35,27 +42,13 @@ public class CreateEntryDialog extends DialogWrapper {
      */
     private JTextArea entryContent;
 
-    /**
-     * 条目解释滚动面板
-     */
-    private JBScrollPane descScrollPane;
-
-    /**
-     * 条目解释滚动面板
-     */
-    private JBScrollPane codeScrollPane;
-
 
 
     /**
      * 构造方法，指定title
-     * @param selectedText 选中的代码段
      */
-    public CreateEntryDialog(String selectedText) {
+    public CreateEntryDialog() {
         super(true);
-        initEntryName();
-        initEntryDesc();
-        initEntryCode(selectedText);
         init();
         setTitle(CreateEntry.TITLE.getValue());
         // 绑定事件
@@ -64,12 +57,37 @@ public class CreateEntryDialog extends DialogWrapper {
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10,10));
-        panel.add(entryName, BorderLayout.NORTH);
-        panel.add(descScrollPane, BorderLayout.CENTER);
-        panel.add(codeScrollPane, BorderLayout.SOUTH);
-        return panel;
+        createComponent();
+
+        return drawDialog();
     }
+
+    /**
+     * 创建面板组件
+     */
+    private void createComponent() {
+        initEntryName();
+        initEntryType();
+        initEntryDesc();
+        initEntryContent();
+    }
+
+
+    /**
+     * 确认操作
+     */
+    @Override
+    protected void doOKAction() {
+        CodeDictionaryEntryData codeDictionaryEntryData = new CodeDictionaryEntryData(entryName.getText(), entryDesc.getText(), entryContent.getText(), EntryDataCenter.ENTRY_CONTENT_TYPE);
+        EntryDataCenter.ENTRY_LIST.add(codeDictionaryEntryData);
+        EntryDataCenter.ENTRY_INFO_TABLE_MODEL.addRow(getNewEntryRow(codeDictionaryEntryData));
+        super.doOKAction();
+    }
+
+    private String[] getNewEntryRow(CodeDictionaryEntryData data) {
+        return new String[]{data.getName(), data.getDesc(),data.getContent()};
+    }
+
 
     /**
      * 为创建词条弹窗控件绑定事件
@@ -116,30 +134,63 @@ public class CreateEntryDialog extends DialogWrapper {
      */
     private void initEntryName() {
         entryName = new JTextField(CreateEntry.NAME_TEXT_PLACEHOLDER.getValue());
-        entryName.setForeground(JBColor.lightGray);
+        entryName.setPreferredSize(new Dimension(320, 0));
+        entryName.setMinimumSize(new Dimension(320, 0));
     }
+
+    /**
+     * 初始化类型笔条目类型
+     */
+    private void initEntryType() {
+        DefaultComboBoxModel<String> entryTypeValue = new DefaultComboBoxModel<>(GlobleUtils.EntryTypeGetter());
+        entryContentType = new JComboBox<>(entryTypeValue);
+        entryTypeValue.setSelectedItem(EntryDataCenter.ENTRY_CONTENT_TYPE);
+    }
+
     /**
      * 初始化描述框
      */
     private void initEntryDesc() {
         entryDesc = new JTextArea(CreateEntry.DESC_TEXT_PLACEHOLDER.getValue());
-        entryDesc.setForeground(JBColor.lightGray);
-        descScrollPane = new JBScrollPane(entryDesc);
-        descScrollPane.setPreferredSize(new Dimension(400,50));
-        descScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        descScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     }
 
     /**
-     * 初始化条目代码
-     * @param selectedText 选中的代码段
+     * 初始化条内容
      */
-    private void initEntryCode(String selectedText) {
-        entryContent = new JTextArea(selectedText);
-        codeScrollPane = new JBScrollPane(entryContent);
-        codeScrollPane.setPreferredSize(new Dimension(400,200));
-        codeScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        codeScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    private void initEntryContent() {
+        entryContent = new JTextArea(EntryDataCenter.ENTRY_CONTENT);
+    }
+
+    /**
+     * 绘制面板
+     * @return
+     */
+    private JPanel drawDialog() {
+        JPanel panel = new JPanel(new BorderLayout(10,10));
+        // entryName entryType pane
+        JPanel entryNorthPane = new JPanel(new BorderLayout());
+        entryNorthPane.add(entryName, BorderLayout.WEST);
+        entryNorthPane.add(entryContentType, BorderLayout.EAST);
+
+        // entryDesc ScrollPane
+        JBScrollPane descScrollPane = new JBScrollPane(entryDesc);
+        descScrollPane.setPreferredSize(new Dimension(400,50));
+        descScrollPane.setMinimumSize(new Dimension(400,50));
+        descScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        descScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        // entryContent ScrollPane
+        JBScrollPane entryContentScrollPane = new JBScrollPane(entryContent);
+        entryContentScrollPane.setPreferredSize(new Dimension(400,200));
+        entryContentScrollPane.setMinimumSize(new Dimension(400,200));
+        entryContentScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        entryContentScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        // add to dialog
+        panel.add(entryNorthPane, BorderLayout.NORTH);
+        panel.add(descScrollPane, BorderLayout.CENTER);
+        panel.add(entryContentScrollPane, BorderLayout.SOUTH);
+        return panel;
     }
 
 }
