@@ -106,7 +106,6 @@ public class CreateEntryDialog extends DialogWrapper {
             public void focusLost(FocusEvent e) {
                 if (StrUtil.isBlank(entryName.getText())) {
                     entryName.setText(CreateEntry.NAME_TEXT_PLACEHOLDER.getValue());
-                    entryName.setForeground(JBColor.lightGray);
                 }
             }
         });
@@ -123,7 +122,6 @@ public class CreateEntryDialog extends DialogWrapper {
             public void focusLost(FocusEvent e) {
                 if (StrUtil.isBlank(entryDesc.getText())) {
                     entryDesc.setText(CreateEntry.DESC_TEXT_PLACEHOLDER.getValue());
-                    entryDesc.setForeground(JBColor.lightGray);
                 }
             }
         });
