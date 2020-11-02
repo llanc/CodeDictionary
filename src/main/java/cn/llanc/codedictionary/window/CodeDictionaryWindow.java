@@ -1,6 +1,8 @@
 package cn.llanc.codedictionary.window;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.entity.ProcessorSourceData;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.utils.GlobleUtils;
@@ -21,8 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static cn.llanc.codedictionary.globle.data.EntryDataCenter.COLUMN_NAMES;
 
 /**
  * @author Langel
@@ -40,11 +47,12 @@ public class CodeDictionaryWindow {
     private JTextArea entryContent;
     private JLabel querierLabel;
     private JScrollPane entryTreeScrollPane;
-    private JToolBar toolBar;
     private JPanel entryTreePanel;
+    private JToolBar.Separator ToolBarSeparator;
 
     private static final String FILENAME = "代码词典.md";
     private static final String NOTIFICATION_GROUP_ID = "markbook_id";
+
     public void initTable() {
         entryInfoTable.setModel(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
         entryInfoTable.setEnabled(true);
@@ -57,12 +65,14 @@ public class CodeDictionaryWindow {
     }
 
     private void bindEventListener( Project project) {
+        // 导入
         importDictionary.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
+        // 保存
         updateDictionary.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,19 +99,41 @@ public class CodeDictionaryWindow {
                 }
             }
         });
+        // 本次
         thisTimeOnly.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
+        // 查询框
         entryNameQuerier.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 super.keyTyped(e);
+                String searchText = entryNameQuerier.getText().trim();
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (StrUtil.isBlank(searchText)) {
+                        initTable();
+                    }
+                    List<String[]> searchResult = EntryDataCenter.ENTRY_LIST.stream()
+                            .filter(codeDictionaryEntryData -> ObjectUtil.isNotEmpty(codeDictionaryEntryData.getName()) && codeDictionaryEntryData.getName().contains(searchText))
+                            .map(codeDictionaryEntryData -> new String[]{codeDictionaryEntryData.getName(), codeDictionaryEntryData.getDesc(), codeDictionaryEntryData.getContent()})
+                            .collect(Collectors.toList());
+                    String[][] result = new String[searchResult.size()][3];
+
+                    for (int i = 0; i < searchResult.size(); i++) {
+                        for (int j = 0; j < searchResult.get(i).length; j++) {
+                            result[i][j] = searchResult.get(i)[j];
+                        }
+                    }
+                    DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
+                    reInitTable(searchTableModel);
+                }
             }
         });
 
+        // 条目选中
         entryInfoTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -114,5 +146,19 @@ public class CodeDictionaryWindow {
 
     public JPanel getFormPanel() {
         return formPanel;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
+
+
+    /**
+     * 初始化表格
+     */
+    private void reInitTable(DefaultTableModel defaultTableModel) {
+        entryInfoTable.setModel(defaultTableModel);
+        entryInfoTable.setEnabled(true);
+        GlobleUtils.hideTableColumn(entryInfoTable,2);
     }
 }

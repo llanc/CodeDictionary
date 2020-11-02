@@ -7,7 +7,7 @@ import javax.swing.table.TableColumn;
 import java.util.Arrays;
 
 /**
- * @author liulancong
+ * @author Langel
  * @ClassName GlobleUtils
  * @Description 工具类
  * @date 2020/8/14

@@ -9,5 +9,9 @@ import cn.llanc.codedictionary.entity.ProcessorSourceData;
  * @date 2020/8/24
  **/
 public interface Processor {
+    /**
+     * @param processorSourceData
+     * @throws Exception
+     */
     void process(ProcessorSourceData processorSourceData) throws Exception;
 }

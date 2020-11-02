@@ -28,9 +28,11 @@ public class EntryDataCenter {
      */
     public static List<CodeDictionaryEntryData> ENTRY_LIST = new LinkedList<>();
 
+    public static String[] COLUMN_NAMES = new String[]{ConstantsEnum.EntryInfoTable.NAME.getValue(), ConstantsEnum.EntryInfoTable.DESC.getValue(), ConstantsEnum.EntryInfoTable.CONTENT.getValue()};
+
     /**
      * 条目列表数据模型
      */
-    public static DefaultTableModel ENTRY_INFO_TABLE_MODEL = new DefaultTableModel(null, new String[]{ConstantsEnum.EntryInfoTable.NAME.getValue(), ConstantsEnum.EntryInfoTable.DESC.getValue(), ConstantsEnum.EntryInfoTable.CONTENT.getValue()});
+    public static DefaultTableModel ENTRY_INFO_TABLE_MODEL = new DefaultTableModel(null, COLUMN_NAMES);
 
 }
