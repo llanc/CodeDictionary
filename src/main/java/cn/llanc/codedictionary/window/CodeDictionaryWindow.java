@@ -2,7 +2,6 @@ package cn.llanc.codedictionary.window;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.entity.ProcessorSourceData;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.utils.GlobleUtils;
@@ -20,13 +19,22 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import org.jetbrains.annotations.NotNull;
 
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.*;
+import javax.swing.table.TableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import static cn.llanc.codedictionary.globle.data.EntryDataCenter.COLUMN_NAMES;
@@ -79,6 +87,10 @@ public class CodeDictionaryWindow {
         updateDictionary.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                DefaultTableModel model = (DefaultTableModel) entryInfoTable.getModel();
+                EntryDataCenter.ENTRY_INFO_TABLE_MODEL.setDataVector( model.getDataVector(), new Vector(Arrays.asList(COLUMN_NAMES)));
+
                 // 选择保存路径
                 VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, ProjectUtil.guessProjectDir(project));
                 if (ObjectUtil.isNotNull(virtualFile)) {
@@ -140,10 +152,24 @@ public class CodeDictionaryWindow {
         entryInfoTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                System.out.println(entryInfoTable.getValueAt(entryInfoTable.getSelectedRow(), 2).toString());
+                if (entryInfoTable.getSelectedRow() == -1) {
+                    return;
+                }
                 entryContent.setText(entryInfoTable.getValueAt(entryInfoTable.getSelectedRow(), 2).toString());
             }
         });
+
+
+        // entryInfoTable.getModel().addTableModelListener(new TableModelListener()
+        // {
+        //     int i = 0;
+        //     @Override
+        //     public void tableChanged(TableModelEvent e)
+        //     {
+        //
+        //     }
+        // });
+
     }
 
 
