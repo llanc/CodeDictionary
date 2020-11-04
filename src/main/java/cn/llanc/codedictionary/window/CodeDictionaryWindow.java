@@ -48,19 +48,22 @@ public class CodeDictionaryWindow {
     private JLabel querierLabel;
     private JScrollPane entryTreeScrollPane;
     private JPanel entryTreePanel;
-    private JToolBar.Separator ToolBarSeparator;
 
     private static final String FILENAME = "代码词典.md";
     private static final String NOTIFICATION_GROUP_ID = "markbook_id";
 
-    public void initTable() {
-        entryInfoTable.setModel(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
+
+    /**
+     * 初始化表格
+     */
+    private void initTable(DefaultTableModel defaultTableModel) {
+        entryInfoTable.setModel(defaultTableModel);
         entryInfoTable.setEnabled(true);
         GlobleUtils.hideTableColumn(entryInfoTable,2);
     }
 
     public CodeDictionaryWindow(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        initTable();
+        initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
         bindEventListener(project);
     }
 
@@ -114,7 +117,7 @@ public class CodeDictionaryWindow {
                 String searchText = entryNameQuerier.getText().trim();
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (StrUtil.isBlank(searchText)) {
-                        initTable();
+                        initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
                     }
                     List<String[]> searchResult = EntryDataCenter.ENTRY_LIST.stream()
                             .filter(codeDictionaryEntryData -> ObjectUtil.isNotEmpty(codeDictionaryEntryData.getName()) && codeDictionaryEntryData.getName().contains(searchText))
@@ -128,7 +131,7 @@ public class CodeDictionaryWindow {
                         }
                     }
                     DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
-                    reInitTable(searchTableModel);
+                    initTable(searchTableModel);
                 }
             }
         });
@@ -153,12 +156,4 @@ public class CodeDictionaryWindow {
     }
 
 
-    /**
-     * 初始化表格
-     */
-    private void reInitTable(DefaultTableModel defaultTableModel) {
-        entryInfoTable.setModel(defaultTableModel);
-        entryInfoTable.setEnabled(true);
-        GlobleUtils.hideTableColumn(entryInfoTable,2);
-    }
 }
