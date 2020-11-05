@@ -68,7 +68,7 @@ public class ConstantsEnum {
     public enum EntryInfoTable{
         NAME("名称"),
         DESC("解释"),
-        CONTENT("内容"),
+        ID("id"),
         ;
         private final String value;
 

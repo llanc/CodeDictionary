@@ -1,6 +1,8 @@
 package cn.llanc.codedictionary.entity;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.IdUtil;
 
 /**
  * @author Langel
@@ -10,6 +12,7 @@ import cn.hutool.core.date.DateUtil;
  **/
 public class CodeDictionaryEntryData {
 
+    private String id;
 
     /**
      * 条目名称
@@ -35,6 +38,19 @@ public class CodeDictionaryEntryData {
      * 创建时间
      */
     private String createData;
+
+    /**
+     * 序号
+     */
+    private int serialNumber;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -79,17 +95,28 @@ public class CodeDictionaryEntryData {
         this.createData = createData;
     }
 
-    public CodeDictionaryEntryData(String name, String desc, String content, String contentType) {
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(int serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public CodeDictionaryEntryData(String name, String desc, String content, String contentType,int serialNumber) {
+        this.id = IdUtil.fastSimpleUUID();
         this.name = name;
         this.desc = desc;
         this.content = content;
         this.contentType = contentType;
         this.createData = DateUtil.date().toDateStr();
+        this.serialNumber = serialNumber;
     }
 
     @Override
     public String toString() {
         return "CodeDictionaryEntryData{" +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
                 ", content='" + content + '\'' +

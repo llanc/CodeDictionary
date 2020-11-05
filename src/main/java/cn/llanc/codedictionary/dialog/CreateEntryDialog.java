@@ -78,14 +78,14 @@ public class CreateEntryDialog extends DialogWrapper {
      */
     @Override
     protected void doOKAction() {
-        CodeDictionaryEntryData codeDictionaryEntryData = new CodeDictionaryEntryData(entryName.getText(), entryDesc.getText(), entryContent.getText(), EntryDataCenter.ENTRY_CONTENT_TYPE);
+        CodeDictionaryEntryData codeDictionaryEntryData = new CodeDictionaryEntryData(entryName.getText(), entryDesc.getText(), entryContent.getText(), EntryDataCenter.ENTRY_CONTENT_TYPE,1);
         EntryDataCenter.ENTRY_LIST.add(codeDictionaryEntryData);
         EntryDataCenter.ENTRY_INFO_TABLE_MODEL.addRow(getNewEntryRow(codeDictionaryEntryData));
         super.doOKAction();
     }
 
     private String[] getNewEntryRow(CodeDictionaryEntryData data) {
-        return new String[]{data.getName(), data.getDesc(),data.getContent()};
+        return new String[]{data.getName(), data.getDesc(),data.getId()};
     }
 
 

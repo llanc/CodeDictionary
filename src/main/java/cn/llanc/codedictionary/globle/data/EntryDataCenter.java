@@ -4,6 +4,7 @@ import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum;
 
 import javax.swing.table.DefaultTableModel;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +29,12 @@ public class EntryDataCenter {
      */
     public static List<CodeDictionaryEntryData> ENTRY_LIST = new LinkedList<>();
 
-    public static String[] COLUMN_NAMES = new String[]{ConstantsEnum.EntryInfoTable.NAME.getValue(), ConstantsEnum.EntryInfoTable.DESC.getValue(), ConstantsEnum.EntryInfoTable.CONTENT.getValue()};
+
+
+    /**
+     * 列名
+     */
+    public static String[] COLUMN_NAMES = new String[]{ConstantsEnum.EntryInfoTable.NAME.getValue(), ConstantsEnum.EntryInfoTable.DESC.getValue(), ConstantsEnum.EntryInfoTable.ID.getValue()};
 
     /**
      * 条目列表数据模型
