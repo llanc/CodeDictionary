@@ -1,4 +1,4 @@
-package cn.llanc.codedictionary.processor;
+package cn.llanc.codedictionary.fileprocess;
 
 import cn.llanc.codedictionary.entity.ProcessorSourceData;
 
