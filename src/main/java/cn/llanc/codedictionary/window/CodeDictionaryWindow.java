@@ -2,8 +2,11 @@ package cn.llanc.codedictionary.window;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.entity.ProcessorSourceData;
+import cn.llanc.codedictionary.fileprocess.loader.CodeDictionaryFileLoader;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
+import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 import cn.llanc.codedictionary.globle.utils.GlobleUtils;
 import cn.llanc.codedictionary.fileprocess.FreeMarkProcessor;
 import com.intellij.notification.Notification;
@@ -11,7 +14,9 @@ import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.MessageType;
@@ -27,7 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -76,7 +81,21 @@ public class CodeDictionaryWindow {
         importDictionary.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                CodeDictionaryFileLoader.loading(project);
+                // 刷新表格
+                List<String[]> entrySources = GlobEntryDataCache.getEntrySource()
+                        .stream()
+                        .map(codeDictionaryEntryData -> new String[]{codeDictionaryEntryData.getName(), codeDictionaryEntryData.getDesc(), codeDictionaryEntryData.getContent()})
+                        .collect(Collectors.toList());
+                String[][] result = new String[entrySources.size()][3];
 
+                for (int i = 0; i < entrySources.size(); i++) {
+                    for (int j = 0; j < entrySources.get(i).length; j++) {
+                        result[i][j] = entrySources.get(i)[j];
+                    }
+                }
+                DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
+                initTable(searchTableModel);
             }
         });
         // 保存

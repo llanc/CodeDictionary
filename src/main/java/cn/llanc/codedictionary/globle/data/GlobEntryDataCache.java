@@ -3,7 +3,6 @@ package cn.llanc.codedictionary.globle.data;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
-import com.sun.jna.platform.win32.Guid;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -24,7 +23,7 @@ public class GlobEntryDataCache {
     /**
      * 全局数据缓存
      */
-    private static LinkedHashMap<String, CodeDictionaryEntryData> globleEntryDataMapCache = new LinkedHashMap<>();
+    private static Map<String, CodeDictionaryEntryData> globeEntryDataMapCache = new HashMap<>();
 
     /**
      * 初始化全局数据缓存
@@ -32,9 +31,10 @@ public class GlobEntryDataCache {
      * @param sourceData
      */
     public static void initGlobEntryDataCache(List<CodeDictionaryEntryData> sourceData) {
-        globleEntryDataMapCache = sourceData.stream()
-                .sorted(Comparator.comparing(CodeDictionaryEntryData::getSerialNumber))
-                .collect(Collectors.toMap(CodeDictionaryEntryData::getId, e -> e, (e1, e2) -> e1, LinkedHashMap::new));
+        globeEntryDataMapCache = sourceData.parallelStream()
+                //.sorted(Comparator.comparing(CodeDictionaryEntryData::getSerialNumber))
+                .collect(Collectors.toMap(CodeDictionaryEntryData::getId, e -> e));
+
     }
 
     /**
@@ -42,7 +42,7 @@ public class GlobEntryDataCache {
      * @return
      */
     public static List<CodeDictionaryEntryData> getEntrySource() {
-        return (List<CodeDictionaryEntryData>) globleEntryDataMapCache.values();
+        return new ArrayList<>(globeEntryDataMapCache.values());
     }
 
 
@@ -53,7 +53,7 @@ public class GlobEntryDataCache {
      * @return
      */
     public Optional<CodeDictionaryEntryData> findById(@Nonnull String id) {
-        return Optional.ofNullable(globleEntryDataMapCache.get(id));
+        return Optional.ofNullable(globeEntryDataMapCache.get(id));
     }
 
     /**
@@ -64,9 +64,9 @@ public class GlobEntryDataCache {
      */
     public List<CodeDictionaryEntryData> findByName(String name) {
         if (StrUtil.isBlank(name)) {
-            return (List<CodeDictionaryEntryData>) globleEntryDataMapCache.values();
+            return (List<CodeDictionaryEntryData>) globeEntryDataMapCache.values();
         }
-        return globleEntryDataMapCache.values()
+        return globeEntryDataMapCache.values()
                 .stream()
                 .filter(e -> e.getName().contains(name))
                 .collect(Collectors.toList());
@@ -78,14 +78,14 @@ public class GlobEntryDataCache {
      * @param entry
      */
     private void addEntry(@Nonnull CodeDictionaryEntryData entry) {
-        entry.setSerialNumber(globleEntryDataMapCache.size() + 1);
-        globleEntryDataMapCache.put(IdUtil.fastSimpleUUID(), entry);
+        entry.setSerialNumber(globeEntryDataMapCache.size() + 1);
+        globeEntryDataMapCache.put(IdUtil.fastSimpleUUID(), entry);
     }
 
     /**
      * 根据id删除条目
      */
     private void removeById(@Nonnull String id) {
-        globleEntryDataMapCache.remove(id);
+        globeEntryDataMapCache.remove(id);
     }
 }
