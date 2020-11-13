@@ -9,6 +9,7 @@ import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 import cn.llanc.codedictionary.globle.utils.GlobleUtils;
 import cn.llanc.codedictionary.fileprocess.FreeMarkProcessor;
+import cn.llanc.codedictionary.globle.utils.SettingUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -72,8 +73,33 @@ public class CodeDictionaryWindow {
     }
 
     public CodeDictionaryWindow(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
-        bindEventListener(project);
+        // 读取词典路径
+        String dictionaryPath = SettingUtil.getDictionaryPath();
+        if (StrUtil.isBlank(dictionaryPath)) {
+            // 加载空表格
+            initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
+            bindEventListener(project);
+            return;
+        }
+
+        // 从文件读取并加载
+        CodeDictionaryFileLoader.loading(dictionaryPath);
+        // 刷新表格
+        List<String[]> entrySources = GlobEntryDataCache.getEntrySource()
+                .stream()
+                .map(codeDictionaryEntryData -> new String[]{codeDictionaryEntryData.getName(), codeDictionaryEntryData.getDesc(), codeDictionaryEntryData.getContent()})
+                .collect(Collectors.toList());
+        String[][] result = new String[entrySources.size()][3];
+
+        for (int i = 0; i < entrySources.size(); i++) {
+            for (int j = 0; j < entrySources.get(i).length; j++) {
+                result[i][j] = entrySources.get(i)[j];
+            }
+        }
+        DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
+        initTable(searchTableModel);
+
+
     }
 
     private void bindEventListener( Project project) {

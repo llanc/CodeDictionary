@@ -5,15 +5,13 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 import cn.llanc.codedictionary.globle.utils.EventLogUtils;
+import cn.llanc.codedictionary.globle.utils.SettingUtil;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -27,12 +25,38 @@ public class CodeDictionaryFileLoader {
 
     private static final String ERROR_MAG = "导入词典失败:";
 
+    /**
+     * 用户选择加载文件
+     * @param project
+     */
     public static void loading(Project project) {
         Optional<InputStream> inputStreamOptional = loadFileAsStream(project);
         if (!inputStreamOptional.isPresent()) {
             return;
         }
         InputStream fileStream = inputStreamOptional.get();
+        dictionaryFileAnalyzer(fileStream);
+    }
+
+    /**
+     * 主动加载默认配置
+     * @param path
+     */
+    public static void loading(String path) {
+        Optional<InputStream> inputStreamOptional = loadFileAsStream(path);
+        if (!inputStreamOptional.isPresent()) {
+            return;
+        }
+        InputStream fileStream = inputStreamOptional.get();
+        dictionaryFileAnalyzer(fileStream);
+    }
+
+
+    /**
+     * 词典文件流分析器
+     * @param fileStream
+     */
+    private static void dictionaryFileAnalyzer(InputStream fileStream) {
         try (BufferedReader bufIn = new BufferedReader(new InputStreamReader(fileStream))) {
             String line;
             CodeDictionaryEntryData entryDataCache = null;
@@ -120,14 +144,33 @@ public class CodeDictionaryFileLoader {
 
 
     /**
-     * 以输入流的方式加载文件
+     * 以输入流的方式加载文件(用户选择)
      * @return
      */
     private static Optional<InputStream> loadFileAsStream(Project project) {
         VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor("md"), project, null);
+
+        //设置新的默认文件地址
+        SettingUtil.saveDictionaryPath(virtualFile.getPath());
+
         InputStream stream = null;
         try {
             stream = virtualFile.getInputStream();
+        } catch (IOException e) {
+            EventLogUtils.exception(ERROR_MAG, e);
+        }
+        return Optional.ofNullable(stream);
+    }
+
+    /**
+     * 以输入流的方式加载文件（主动加载）
+     * @return
+     */
+    private static Optional<InputStream> loadFileAsStream(String path) {
+        File file = new File(path);
+        InputStream stream = null;
+        try {
+            stream =  new FileInputStream(file);
         } catch (IOException e) {
             EventLogUtils.exception(ERROR_MAG, e);
         }
