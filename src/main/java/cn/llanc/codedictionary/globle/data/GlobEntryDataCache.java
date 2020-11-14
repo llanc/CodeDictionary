@@ -52,7 +52,7 @@ public class GlobEntryDataCache {
      * @param id
      * @return
      */
-    public Optional<CodeDictionaryEntryData> findById(@Nonnull String id) {
+    public static Optional<CodeDictionaryEntryData> findById(@Nonnull String id) {
         return Optional.ofNullable(globeEntryDataMapCache.get(id));
     }
 
@@ -62,7 +62,7 @@ public class GlobEntryDataCache {
      * @param name
      * @return
      */
-    public List<CodeDictionaryEntryData> findByName(String name) {
+    public static List<CodeDictionaryEntryData> findByName(String name) {
         if (StrUtil.isBlank(name)) {
             return (List<CodeDictionaryEntryData>) globeEntryDataMapCache.values();
         }
@@ -77,15 +77,15 @@ public class GlobEntryDataCache {
      *
      * @param entry
      */
-    private void addEntry(@Nonnull CodeDictionaryEntryData entry) {
+    public static void addEntry(@Nonnull CodeDictionaryEntryData entry) {
         entry.setSerialNumber(globeEntryDataMapCache.size() + 1);
-        globeEntryDataMapCache.put(IdUtil.fastSimpleUUID(), entry);
+        globeEntryDataMapCache.put(entry.getId(), entry);
     }
 
     /**
      * 根据id删除条目
      */
-    private void removeById(@Nonnull String id) {
+    public static void removeById(@Nonnull String id) {
         globeEntryDataMapCache.remove(id);
     }
 }

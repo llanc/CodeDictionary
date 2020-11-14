@@ -24,12 +24,6 @@ public class EntryDataCenter {
      * 条目内容类型
      */
     public static String ENTRY_CONTENT_TYPE;
-    /**
-     * 条目列表
-     */
-    public static List<CodeDictionaryEntryData> ENTRY_LIST = new LinkedList<>();
-
-
 
     /**
      * 列名
@@ -39,6 +33,6 @@ public class EntryDataCenter {
     /**
      * 条目列表数据模型
      */
-    public static DefaultTableModel ENTRY_INFO_TABLE_MODEL = new DefaultTableModel(null, COLUMN_NAMES);
+    public static DefaultTableModel ENTRY_INFO_TABLE_MODEL;
 
 }

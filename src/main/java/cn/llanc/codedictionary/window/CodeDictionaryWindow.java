@@ -18,11 +18,15 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.EditorTextField;
+import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -54,10 +59,11 @@ public class CodeDictionaryWindow {
     private JButton thisTimeOnly;
     private JTextField entryNameQuerier;
     private JTable entryInfoTable;
-    private JTextArea entryContent;
+    private EditorTextField entryContent;
     private JLabel querierLabel;
     private JScrollPane entryTreeScrollPane;
     private JPanel entryTreePanel;
+    private JSplitPane splitPane;
 
     private static final String FILENAME = "代码词典.md";
     private static final String NOTIFICATION_GROUP_ID = "markbook_id";
@@ -73,10 +79,13 @@ public class CodeDictionaryWindow {
     }
 
     public CodeDictionaryWindow(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+        splitPane.setContinuousLayout(true);
+        entryContent.setOneLineMode(false);
         // 读取词典路径
         String dictionaryPath = SettingUtil.getDictionaryPath();
         if (StrUtil.isBlank(dictionaryPath)) {
             // 加载空表格
+            EntryDataCenter.ENTRY_INFO_TABLE_MODEL = new DefaultTableModel(null, COLUMN_NAMES);
             initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
             bindEventListener(project);
             return;
@@ -84,22 +93,10 @@ public class CodeDictionaryWindow {
 
         // 从文件读取并加载
         CodeDictionaryFileLoader.loading(dictionaryPath);
-        // 刷新表格
-        List<String[]> entrySources = GlobEntryDataCache.getEntrySource()
-                .stream()
-                .map(codeDictionaryEntryData -> new String[]{codeDictionaryEntryData.getName(), codeDictionaryEntryData.getDesc(), codeDictionaryEntryData.getContent()})
-                .collect(Collectors.toList());
-        String[][] result = new String[entrySources.size()][3];
 
-        for (int i = 0; i < entrySources.size(); i++) {
-            for (int j = 0; j < entrySources.get(i).length; j++) {
-                result[i][j] = entrySources.get(i)[j];
-            }
-        }
-        DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
-        initTable(searchTableModel);
-
-
+        EntryDataCenter.ENTRY_INFO_TABLE_MODEL =  new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
+        initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
+        bindEventListener(project);
     }
 
     private void bindEventListener( Project project) {
@@ -108,19 +105,7 @@ public class CodeDictionaryWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CodeDictionaryFileLoader.loading(project);
-                // 刷新表格
-                List<String[]> entrySources = GlobEntryDataCache.getEntrySource()
-                        .stream()
-                        .map(codeDictionaryEntryData -> new String[]{codeDictionaryEntryData.getName(), codeDictionaryEntryData.getDesc(), codeDictionaryEntryData.getContent()})
-                        .collect(Collectors.toList());
-                String[][] result = new String[entrySources.size()][3];
-
-                for (int i = 0; i < entrySources.size(); i++) {
-                    for (int j = 0; j < entrySources.get(i).length; j++) {
-                        result[i][j] = entrySources.get(i)[j];
-                    }
-                }
-                DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
+                DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
                 initTable(searchTableModel);
             }
         });
@@ -138,7 +123,7 @@ public class CodeDictionaryWindow {
                     String path = virtualFile.getPath();
                     String realPath = path + File.separator + FILENAME;
 
-                    ProcessorSourceData processorSourceData = new ProcessorSourceData(realPath,EntryDataCenter.ENTRY_LIST);
+                    ProcessorSourceData processorSourceData = new ProcessorSourceData(realPath,GlobEntryDataCache.getEntrySource());
 
                     FreeMarkProcessor mdFreeMarkProcessor = new FreeMarkProcessor();
                     try {
@@ -172,18 +157,7 @@ public class CodeDictionaryWindow {
                     if (StrUtil.isBlank(searchText)) {
                         initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
                     }
-                    List<String[]> searchResult = EntryDataCenter.ENTRY_LIST.stream()
-                            .filter(codeDictionaryEntryData -> ObjectUtil.isNotEmpty(codeDictionaryEntryData.getName()) && codeDictionaryEntryData.getName().contains(searchText))
-                            .map(codeDictionaryEntryData -> new String[]{codeDictionaryEntryData.getName(), codeDictionaryEntryData.getDesc(), codeDictionaryEntryData.getContent()})
-                            .collect(Collectors.toList());
-                    String[][] result = new String[searchResult.size()][3];
-
-                    for (int i = 0; i < searchResult.size(); i++) {
-                        for (int j = 0; j < searchResult.get(i).length; j++) {
-                            result[i][j] = searchResult.get(i)[j];
-                        }
-                    }
-                    DefaultTableModel searchTableModel = new DefaultTableModel(result, COLUMN_NAMES);
+                    DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
                     initTable(searchTableModel);
                 }
             }
@@ -196,7 +170,13 @@ public class CodeDictionaryWindow {
                 if (entryInfoTable.getSelectedRow() == -1) {
                     return;
                 }
-                entryContent.setText(entryInfoTable.getValueAt(entryInfoTable.getSelectedRow(), 2).toString());
+                Optional<CodeDictionaryEntryData> content = GlobEntryDataCache.findById(entryInfoTable.getValueAt(entryInfoTable.getSelectedRow(), 2).toString());
+                if (!content.isPresent()) {
+                    return;
+                }
+                CodeDictionaryEntryData codeDictionaryEntryData = content.get();
+                entryContent.setFileType(FileTypes.ARCHIVE);
+                entryContent.setText(codeDictionaryEntryData.getContent());
             }
         });
 

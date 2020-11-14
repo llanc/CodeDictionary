@@ -16,7 +16,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow id="codeDictionaryWindow" factoryClass="cn.llanc.codedictionary.window.CodeDictionaryWindowFactory" anchor="right" ></toolWindow>
+        <toolWindow id="codeDictionaryWindow" factoryClass="cn.llanc.codedictionary.window.CodeDictionaryWindowFactory" anchor="bottom" ></toolWindow>
     </extensions>
 
     <actions>

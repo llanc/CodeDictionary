@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum.CreateEntry;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
+import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 import cn.llanc.codedictionary.globle.utils.GlobleUtils;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.JBColor;
@@ -79,7 +80,7 @@ public class CreateEntryDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         CodeDictionaryEntryData codeDictionaryEntryData = new CodeDictionaryEntryData(entryName.getText(), entryDesc.getText(), entryContent.getText(), EntryDataCenter.ENTRY_CONTENT_TYPE,1);
-        EntryDataCenter.ENTRY_LIST.add(codeDictionaryEntryData);
+        GlobEntryDataCache.addEntry(codeDictionaryEntryData);
         EntryDataCenter.ENTRY_INFO_TABLE_MODEL.addRow(getNewEntryRow(codeDictionaryEntryData));
         super.doOKAction();
     }

@@ -11,9 +11,9 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'cn.hutool:hutool-core:5.3.10'
-    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    implementation 'cn.hutool:hutool-core:5.3.10'
+    implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
 
 }
 
@@ -25,4 +25,8 @@ patchPluginXml {
     changeNotes """
       Add change notes here.<br>
       <em>most HTML tags may be used</em>"""
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
