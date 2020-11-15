@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.entity.ProcessorSourceData;
+import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.fileprocess.loader.CodeDictionaryFileLoader;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
@@ -27,11 +28,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBSplitter;
+import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,7 +71,7 @@ public class CodeDictionaryWindow {
     private JSplitPane splitPane;
 
     private static final String FILENAME = "代码词典.md";
-    private static final String NOTIFICATION_GROUP_ID = "markbook_id";
+
 
 
     /**
@@ -113,30 +118,17 @@ public class CodeDictionaryWindow {
         updateDictionary.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                DefaultTableModel model = (DefaultTableModel) entryInfoTable.getModel();
-                EntryDataCenter.ENTRY_INFO_TABLE_MODEL.setDataVector( model.getDataVector(), new Vector(Arrays.asList(COLUMN_NAMES)));
-
+                String dictionaryPath = SettingUtil.getDictionaryPath();
+                if (StrUtil.isNotBlank(dictionaryPath)) {
+                    CodeDictionaryFileExporter.export(dictionaryPath);
+                    return;
+                }
                 // 选择保存路径
                 VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, ProjectUtil.guessProjectDir(project));
                 if (ObjectUtil.isNotNull(virtualFile)) {
                     String path = virtualFile.getPath();
                     String realPath = path + File.separator + FILENAME;
-
-                    ProcessorSourceData processorSourceData = new ProcessorSourceData(realPath,GlobEntryDataCache.getEntrySource());
-
-                    FreeMarkProcessor mdFreeMarkProcessor = new FreeMarkProcessor();
-                    try {
-                        mdFreeMarkProcessor.process(processorSourceData);
-                    } catch (Exception exception) {
-                        NotificationGroup notificationGroup = new NotificationGroup(NOTIFICATION_GROUP_ID, NotificationDisplayType.BALLOON);
-                        Notification notification = notificationGroup.createNotification("生成文档失败！" , MessageType.INFO);
-                        Notifications.Bus.notify(notification);
-                        exception.printStackTrace();
-                    }
-                    NotificationGroup notificationGroup = new NotificationGroup(NOTIFICATION_GROUP_ID, NotificationDisplayType.BALLOON);
-                    Notification notification = notificationGroup.createNotification("生成文档成功：" + realPath, MessageType.INFO);
-                    Notifications.Bus.notify(notification);
+                    CodeDictionaryFileExporter.export(realPath);
                 }
             }
         });
@@ -157,7 +149,7 @@ public class CodeDictionaryWindow {
                     if (StrUtil.isBlank(searchText)) {
                         initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
                     }
-                    DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
+                    DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormatForSearch(searchText), COLUMN_NAMES);
                     initTable(searchTableModel);
                 }
             }
@@ -181,15 +173,24 @@ public class CodeDictionaryWindow {
         });
 
 
-        // entryInfoTable.getModel().addTableModelListener(new TableModelListener()
-        // {
-        //     int i = 0;
-        //     @Override
-        //     public void tableChanged(TableModelEvent e)
-        //     {
-        //
-        //     }
-        // });
+        entryInfoTable.getModel().addTableModelListener(new TableModelListener()
+        {
+            @Override
+            public void tableChanged(TableModelEvent e)
+            {
+                if (e.getType() == 0 && e.getFirstRow() == e.getLastRow()) {
+                    DefaultTableModel source = (DefaultTableModel) e.getSource();
+                    Vector dataVector = source.getDataVector();
+                    Vector formatData = (Vector) dataVector.get(e.getFirstRow());
+                    CodeDictionaryEntryData codeDictionaryEntryData = GlobleUtils.unformatEntryData(formatData);
+                    codeDictionaryEntryData.setContent(entryContent.getText());
+                    GlobEntryDataCache.modifyById(codeDictionaryEntryData);
+                }
+            }
+        });
+
+        //TODO：
+        // jbEdit vale change event to  save
 
     }
 

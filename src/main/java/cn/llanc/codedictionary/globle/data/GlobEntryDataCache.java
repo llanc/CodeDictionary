@@ -88,4 +88,16 @@ public class GlobEntryDataCache {
     public static void removeById(@Nonnull String id) {
         globeEntryDataMapCache.remove(id);
     }
+
+    /**
+     * 根据id更新数据
+     * @param entryData
+     */
+    public static void modifyById(CodeDictionaryEntryData entryData) {
+        CodeDictionaryEntryData codeDictionaryEntryData = globeEntryDataMapCache.get(entryData.getId());
+        codeDictionaryEntryData.setName(entryData.getName());
+        codeDictionaryEntryData.setDesc(entryData.getDesc());
+        codeDictionaryEntryData.setContent(entryData.getContent());
+        globeEntryDataMapCache.put(entryData.getId(), codeDictionaryEntryData);
+    }
 }
