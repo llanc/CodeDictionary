@@ -3,51 +3,32 @@ package cn.llanc.codedictionary.window;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
-import cn.llanc.codedictionary.entity.ProcessorSourceData;
 import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.fileprocess.loader.CodeDictionaryFileLoader;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 import cn.llanc.codedictionary.globle.utils.GlobleUtils;
-import cn.llanc.codedictionary.fileprocess.FreeMarkProcessor;
 import cn.llanc.codedictionary.globle.utils.SettingUtil;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.EditorTextField;
-import com.intellij.ui.JBSplitter;
-import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
 
-import javax.sound.midi.Soundbank;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.awt.event.*;
+import java.io.File;
 import java.util.Optional;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 import static cn.llanc.codedictionary.globle.data.EntryDataCenter.COLUMN_NAMES;
 
@@ -61,7 +42,7 @@ public class CodeDictionaryWindow {
     private JPanel formPanel;
     private JButton importDictionary;
     private JButton updateDictionary;
-    private JButton thisTimeOnly;
+    private JButton deleteEntry;
     private JTextField entryNameQuerier;
     private JTable entryInfoTable;
     private EditorTextField entryContent;
@@ -70,6 +51,7 @@ public class CodeDictionaryWindow {
     private JPanel entryTreePanel;
     private JSplitPane splitPane;
 
+    private static String currentId;
     private static final String FILENAME = "代码词典.md";
 
 
@@ -133,10 +115,12 @@ public class CodeDictionaryWindow {
             }
         });
         // 本次
-        thisTimeOnly.addActionListener(new ActionListener() {
+        deleteEntry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                GlobEntryDataCache.removeById(currentId);
+                DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
+                initTable(searchTableModel);
             }
         });
         // 查询框
@@ -167,6 +151,7 @@ public class CodeDictionaryWindow {
                     return;
                 }
                 CodeDictionaryEntryData codeDictionaryEntryData = content.get();
+                currentId = codeDictionaryEntryData.getId();
                 entryContent.setFileType(FileTypes.ARCHIVE);
                 entryContent.setText(codeDictionaryEntryData.getContent());
             }
@@ -183,15 +168,24 @@ public class CodeDictionaryWindow {
                     Vector dataVector = source.getDataVector();
                     Vector formatData = (Vector) dataVector.get(e.getFirstRow());
                     CodeDictionaryEntryData codeDictionaryEntryData = GlobleUtils.unformatEntryData(formatData);
-                    codeDictionaryEntryData.setContent(entryContent.getText());
                     GlobEntryDataCache.modifyById(codeDictionaryEntryData);
                 }
             }
         });
 
-        //TODO：
-        // jbEdit vale change event to  save
-
+        entryContent.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String text = entryContent.getText();
+                Optional<CodeDictionaryEntryData> dataOptional = GlobEntryDataCache.findById(currentId);
+                if (!dataOptional.isPresent()) {
+                    return;
+                }
+                CodeDictionaryEntryData codeDictionaryEntryData = dataOptional.get();
+                codeDictionaryEntryData.setContent(text);
+                GlobEntryDataCache.modifyById(codeDictionaryEntryData);
+            }
+        });
     }
 
 

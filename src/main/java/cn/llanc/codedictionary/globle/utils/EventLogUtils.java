@@ -14,7 +14,7 @@ import com.intellij.openapi.ui.MessageType;
  **/
 public class EventLogUtils {
 
-    private static final String NOTIFICATION_GROUP_ID = "markbook_id";
+    private static final String NOTIFICATION_GROUP_ID = "Plugin Code Dictionary";
     private static final NotificationGroup notificationGroup = new NotificationGroup(NOTIFICATION_GROUP_ID, NotificationDisplayType.BALLOON);
 
     private EventLogUtils() {
