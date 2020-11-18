@@ -7,11 +7,17 @@ import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
+
+import static cn.llanc.codedictionary.globle.data.EntryDataCenter.COLUMN_NAMES;
 
 /**
  * @author Langel
@@ -19,8 +25,8 @@ import java.util.stream.Collectors;
  * @Description 工具类
  * @date 2020/8/14
  **/
-public class GlobleUtils {
-    private GlobleUtils() {
+public class GlobalUtils {
+    private GlobalUtils() {
 
     }
 
@@ -56,7 +62,7 @@ public class GlobleUtils {
         // 刷新表格
         List<String[]> entrySources = GlobEntryDataCache.getEntrySource()
                 .parallelStream()
-                .map(GlobleUtils::formatEntryData)
+                .map(GlobalUtils::formatEntryData)
                 .collect(Collectors.toList());
         return transToTwoDimensionalArray(entrySources);
     }
@@ -70,7 +76,7 @@ public class GlobleUtils {
         List<String[]> searchResult = GlobEntryDataCache.getEntrySource()
                 .parallelStream()
                 .filter(codeDictionaryEntryData -> ObjectUtil.isNotEmpty(codeDictionaryEntryData.getName()) && codeDictionaryEntryData.getName().contains(searchText))
-                .map(GlobleUtils::formatEntryData)
+                .map(GlobalUtils::formatEntryData)
                 .collect(Collectors.toList());
         return transToTwoDimensionalArray(searchResult);
     }
@@ -111,6 +117,36 @@ public class GlobleUtils {
         codeDictionaryEntryData.setDesc((String) vector.get(1));
         codeDictionaryEntryData.setId((String) vector.get(2));
         return codeDictionaryEntryData;
-
     }
+
+    /**
+     * 重新渲染表格
+     */
+    public static void reBuildTableModel(String[][] data) {
+        EntryDataCenter.ENTRY_INFO_TABLE_MODEL = new DefaultTableModel(data, COLUMN_NAMES);
+        EntryDataCenter.ENTRY_INFO_TABLE_MODEL.addTableModelListener(new TableModelListener()
+        {
+            @Override
+            public void tableChanged(TableModelEvent e)
+            {
+                if (e.getType() == 0 && e.getFirstRow() == e.getLastRow()) {
+                    DefaultTableModel source = (DefaultTableModel) e.getSource();
+                    Vector dataVector = source.getDataVector();
+                    Vector formatData = (Vector) dataVector.get(e.getFirstRow());
+                    CodeDictionaryEntryData codeDictionaryEntryData = GlobalUtils.unformatEntryData(formatData);
+                    GlobEntryDataCache.modifyNameDescById(codeDictionaryEntryData);
+                }
+            }
+        });
+    }
+
+    /**
+     * 判断文件是否存在
+     * @return
+     */
+    public static boolean isFileExists(String path) {
+        File file = new File(path);
+        return file.exists();
+    }
+
 }

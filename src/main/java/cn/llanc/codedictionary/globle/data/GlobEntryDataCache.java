@@ -1,6 +1,6 @@
 package cn.llanc.codedictionary.globle.data;
 
-import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 
@@ -15,10 +15,6 @@ import java.util.stream.Collectors;
  * @date 2020/11/5
  **/
 public class GlobEntryDataCache {
-    /**
-     * 最大序号
-     */
-    private int maxSerialNumber;
 
     /**
      * 全局数据缓存
@@ -32,7 +28,6 @@ public class GlobEntryDataCache {
      */
     public static void initGlobEntryDataCache(List<CodeDictionaryEntryData> sourceData) {
         globeEntryDataMapCache = sourceData.parallelStream()
-                //.sorted(Comparator.comparing(CodeDictionaryEntryData::getSerialNumber))
                 .collect(Collectors.toMap(CodeDictionaryEntryData::getId, e -> e));
 
     }
@@ -42,7 +37,9 @@ public class GlobEntryDataCache {
      * @return
      */
     public static List<CodeDictionaryEntryData> getEntrySource() {
-        return new ArrayList<>(globeEntryDataMapCache.values());
+        ArrayList<CodeDictionaryEntryData> codeDictionaryEntryData = new ArrayList<>(globeEntryDataMapCache.values());
+        codeDictionaryEntryData.sort(Comparator.comparing(CodeDictionaryEntryData::getRecentModifyData).reversed());
+        return codeDictionaryEntryData;
     }
 
 
@@ -57,7 +54,7 @@ public class GlobEntryDataCache {
     }
 
     /**
-     * 根据用户名模糊查找
+     * 根据条目名模糊查找
      *
      * @param name
      * @return
@@ -67,8 +64,9 @@ public class GlobEntryDataCache {
             return (List<CodeDictionaryEntryData>) globeEntryDataMapCache.values();
         }
         return globeEntryDataMapCache.values()
-                .stream()
+                .parallelStream()
                 .filter(e -> e.getName().contains(name))
+                .sorted(Comparator.comparing(CodeDictionaryEntryData::getRecentModifyData).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +76,6 @@ public class GlobEntryDataCache {
      * @param entry
      */
     public static void addEntry(@Nonnull CodeDictionaryEntryData entry) {
-        entry.setSerialNumber(globeEntryDataMapCache.size() + 1);
         globeEntryDataMapCache.put(entry.getId(), entry);
     }
 
@@ -98,6 +95,18 @@ public class GlobEntryDataCache {
         codeDictionaryEntryData.setName(entryData.getName());
         codeDictionaryEntryData.setDesc(entryData.getDesc());
         codeDictionaryEntryData.setContent(entryData.getContent());
+        codeDictionaryEntryData.setRecentModifyData(DateUtil.date());
+        globeEntryDataMapCache.put(entryData.getId(), codeDictionaryEntryData);
+    }
+    /**
+     * 根据id更新数据
+     * @param entryData
+     */
+    public static void modifyNameDescById(CodeDictionaryEntryData entryData) {
+        CodeDictionaryEntryData codeDictionaryEntryData = globeEntryDataMapCache.get(entryData.getId());
+        codeDictionaryEntryData.setName(entryData.getName());
+        codeDictionaryEntryData.setDesc(entryData.getDesc());
+        codeDictionaryEntryData.setRecentModifyData(DateUtil.date());
         globeEntryDataMapCache.put(entryData.getId(), codeDictionaryEntryData);
     }
 }

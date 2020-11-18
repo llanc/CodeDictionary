@@ -3,7 +3,7 @@ package cn.llanc.codedictionary.action;
 import cn.llanc.codedictionary.dialog.CreateEntryDialog;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
-import cn.llanc.codedictionary.globle.utils.GlobleUtils;
+import cn.llanc.codedictionary.globle.utils.GlobalUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -42,7 +42,7 @@ public class PopupAction extends AnAction {
     private String getEntryType(AnActionEvent e) {
         String fileName = e.getRequiredData(CommonDataKeys.PSI_FILE).getViewProvider().getVirtualFile().getName();
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".")+1);
-        for (String s : GlobleUtils.EntryTypeGetter()) {
+        for (String s : GlobalUtils.EntryTypeGetter()) {
             if (s.equals(fileExtensionName)) {
                 return fileExtensionName;
             }

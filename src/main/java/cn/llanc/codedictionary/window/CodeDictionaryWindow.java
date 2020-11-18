@@ -7,7 +7,7 @@ import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.fileprocess.loader.CodeDictionaryFileLoader;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
-import cn.llanc.codedictionary.globle.utils.GlobleUtils;
+import cn.llanc.codedictionary.globle.utils.GlobalUtils;
 import cn.llanc.codedictionary.globle.utils.SettingUtil;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -22,15 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.io.File;
 import java.util.Optional;
-import java.util.Vector;
-
-import static cn.llanc.codedictionary.globle.data.EntryDataCenter.COLUMN_NAMES;
 
 /**
  * @author Langel
@@ -62,7 +57,7 @@ public class CodeDictionaryWindow {
     private void initTable(DefaultTableModel defaultTableModel) {
         entryInfoTable.setModel(defaultTableModel);
         entryInfoTable.setEnabled(true);
-        GlobleUtils.hideTableColumn(entryInfoTable,2);
+        GlobalUtils.hideTableColumn(entryInfoTable,2);
     }
 
     public CodeDictionaryWindow(@NotNull Project project, @NotNull ToolWindow toolWindow) {
@@ -72,7 +67,7 @@ public class CodeDictionaryWindow {
         String dictionaryPath = SettingUtil.getDictionaryPath();
         if (StrUtil.isBlank(dictionaryPath)) {
             // 加载空表格
-            EntryDataCenter.ENTRY_INFO_TABLE_MODEL = new DefaultTableModel(null, COLUMN_NAMES);
+            GlobalUtils.reBuildTableModel(null);
             initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
             bindEventListener(project);
             return;
@@ -80,8 +75,7 @@ public class CodeDictionaryWindow {
 
         // 从文件读取并加载
         CodeDictionaryFileLoader.loading(dictionaryPath);
-
-        EntryDataCenter.ENTRY_INFO_TABLE_MODEL =  new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
+        GlobalUtils.reBuildTableModel(GlobalUtils.getEntryDataAsTableFormat());
         initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
         bindEventListener(project);
     }
@@ -92,8 +86,8 @@ public class CodeDictionaryWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CodeDictionaryFileLoader.loading(project);
-                DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
-                initTable(searchTableModel);
+                GlobalUtils.reBuildTableModel(GlobalUtils.getEntryDataAsTableFormat());
+                initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
             }
         });
         // 保存
@@ -101,7 +95,7 @@ public class CodeDictionaryWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String dictionaryPath = SettingUtil.getDictionaryPath();
-                if (StrUtil.isNotBlank(dictionaryPath)) {
+                if (StrUtil.isNotBlank(dictionaryPath) && GlobalUtils.isFileExists(dictionaryPath)) {
                     CodeDictionaryFileExporter.export(dictionaryPath);
                     return;
                 }
@@ -114,13 +108,13 @@ public class CodeDictionaryWindow {
                 }
             }
         });
-        // 本次
+        // 删除
         deleteEntry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GlobEntryDataCache.removeById(currentId);
-                DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormat(), COLUMN_NAMES);
-                initTable(searchTableModel);
+                GlobalUtils.reBuildTableModel(GlobalUtils.getEntryDataAsTableFormat());
+                initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
             }
         });
         // 查询框
@@ -131,10 +125,11 @@ public class CodeDictionaryWindow {
                 String searchText = entryNameQuerier.getText().trim();
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (StrUtil.isBlank(searchText)) {
+                        GlobalUtils.reBuildTableModel(GlobalUtils.getEntryDataAsTableFormat());
                         initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
                     }
-                    DefaultTableModel searchTableModel = new DefaultTableModel(GlobleUtils.getEntryDataAsTableFormatForSearch(searchText), COLUMN_NAMES);
-                    initTable(searchTableModel);
+                    GlobalUtils.reBuildTableModel(GlobalUtils.getEntryDataAsTableFormatForSearch(searchText));
+                    initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
                 }
             }
         });
@@ -154,22 +149,6 @@ public class CodeDictionaryWindow {
                 currentId = codeDictionaryEntryData.getId();
                 entryContent.setFileType(FileTypes.ARCHIVE);
                 entryContent.setText(codeDictionaryEntryData.getContent());
-            }
-        });
-
-
-        entryInfoTable.getModel().addTableModelListener(new TableModelListener()
-        {
-            @Override
-            public void tableChanged(TableModelEvent e)
-            {
-                if (e.getType() == 0 && e.getFirstRow() == e.getLastRow()) {
-                    DefaultTableModel source = (DefaultTableModel) e.getSource();
-                    Vector dataVector = source.getDataVector();
-                    Vector formatData = (Vector) dataVector.get(e.getFirstRow());
-                    CodeDictionaryEntryData codeDictionaryEntryData = GlobleUtils.unformatEntryData(formatData);
-                    GlobEntryDataCache.modifyById(codeDictionaryEntryData);
-                }
             }
         });
 

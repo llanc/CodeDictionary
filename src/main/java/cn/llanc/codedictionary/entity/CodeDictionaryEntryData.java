@@ -3,6 +3,10 @@ package cn.llanc.codedictionary.entity;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.IdUtil;
+import org.jsoup.helper.DataUtil;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * @author Langel
@@ -35,14 +39,12 @@ public class CodeDictionaryEntryData {
     private String contentType;
 
     /**
-     * 创建时间
+     * 最近修改时间
      */
-    private String createData;
+    private Date recentModifyData;
 
-    /**
-     * 序号
-     */
-    private int serialNumber;
+    private String recentModifyDataStr;
+
 
     public String getId() {
         return id;
@@ -87,30 +89,27 @@ public class CodeDictionaryEntryData {
     public CodeDictionaryEntryData() {
     }
 
-    public String getCreateData() {
-        return createData;
+    public Date getRecentModifyData() {
+        return recentModifyData;
     }
 
-    public void setCreateData(String createData) {
-        this.createData = createData;
+    public void setRecentModifyData(Date recentModifyData) {
+        this.recentModifyData = recentModifyData;
+        this.recentModifyDataStr = DateUtil.format(recentModifyData, "yyyy-MM-dd hh:mm:ss");
     }
 
-    public int getSerialNumber() {
-        return serialNumber;
+    public String getRecentModifyDataStr() {
+        return recentModifyDataStr;
     }
 
-    public void setSerialNumber(int serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public CodeDictionaryEntryData(String name, String desc, String content, String contentType,int serialNumber) {
+    public CodeDictionaryEntryData(String name, String desc, String content, String contentType) {
         this.id = IdUtil.fastSimpleUUID();
         this.name = name;
         this.desc = desc;
         this.content = content;
         this.contentType = contentType;
-        this.createData = DateUtil.date().toDateStr();
-        this.serialNumber = serialNumber;
+        this.recentModifyData = DateUtil.date();
+        this.recentModifyDataStr = DateUtil.formatDateTime(recentModifyData);
     }
 
     @Override
@@ -121,7 +120,7 @@ public class CodeDictionaryEntryData {
                 ", desc='" + desc + '\'' +
                 ", content='" + content + '\'' +
                 ", contentType='" + contentType + '\'' +
-                ", createData='" + createData + '\'' +
+                ", recentModifyData='" + recentModifyData + '\'' +
                 '}';
     }
 }

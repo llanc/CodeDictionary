@@ -1,5 +1,6 @@
 package cn.llanc.codedictionary.fileprocess.loader;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
@@ -23,7 +24,7 @@ import java.util.Optional;
  **/
 public class CodeDictionaryFileLoader {
 
-    private static final String ERROR_MAG = "导入词典失败:";
+    private static final String ERROR_MAG = "加载词典失败:";
 
     /**
      * 用户选择加载文件
@@ -75,6 +76,10 @@ public class CodeDictionaryFileLoader {
                     continue;
                 }
                 if (line.startsWith("- ")) {
+                    entryDataCache.setRecentModifyData(DateUtil.parse(line.substring(2)));
+                    continue;
+                }
+                if (line.startsWith("> ")) {
                     entryDataCache.setDesc(line.substring(2));
                     continue;
                 }

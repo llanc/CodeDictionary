@@ -5,16 +5,16 @@ import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum.CreateEntry;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
-import cn.llanc.codedictionary.globle.utils.GlobleUtils;
+import cn.llanc.codedictionary.globle.utils.GlobalUtils;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 
 /**
  * @author Langel
@@ -36,7 +36,7 @@ public class CreateEntryDialog extends DialogWrapper {
     /**
      * 条目解释
      */
-    private JTextArea entryDesc;
+    private EditorTextField entryDesc;
 
     /**
      * 代码段
@@ -79,9 +79,9 @@ public class CreateEntryDialog extends DialogWrapper {
      */
     @Override
     protected void doOKAction() {
-        CodeDictionaryEntryData codeDictionaryEntryData = new CodeDictionaryEntryData(entryName.getText(), entryDesc.getText(), entryContent.getText(), EntryDataCenter.ENTRY_CONTENT_TYPE,1);
+        CodeDictionaryEntryData codeDictionaryEntryData = new CodeDictionaryEntryData(entryName.getText(), entryDesc.getText(), entryContent.getText(), EntryDataCenter.ENTRY_CONTENT_TYPE);
         GlobEntryDataCache.addEntry(codeDictionaryEntryData);
-        EntryDataCenter.ENTRY_INFO_TABLE_MODEL.addRow(getNewEntryRow(codeDictionaryEntryData));
+        EntryDataCenter.ENTRY_INFO_TABLE_MODEL.insertRow(0,getNewEntryRow(codeDictionaryEntryData));
         super.doOKAction();
     }
 
@@ -108,6 +108,13 @@ public class CreateEntryDialog extends DialogWrapper {
                 if (StrUtil.isBlank(entryName.getText())) {
                     entryName.setText(CreateEntry.NAME_TEXT_PLACEHOLDER.getValue());
                 }
+            }
+        });
+
+        entryContentType.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                EntryDataCenter.ENTRY_CONTENT_TYPE = entryContentType.getSelectedItem().toString();
             }
         });
 
@@ -141,7 +148,7 @@ public class CreateEntryDialog extends DialogWrapper {
      * 初始化类型笔条目类型
      */
     private void initEntryType() {
-        DefaultComboBoxModel<String> entryTypeValue = new DefaultComboBoxModel<>(GlobleUtils.EntryTypeGetter());
+        DefaultComboBoxModel<String> entryTypeValue = new DefaultComboBoxModel<>(GlobalUtils.EntryTypeGetter());
         entryContentType = new JComboBox<>(entryTypeValue);
         entryTypeValue.setSelectedItem(EntryDataCenter.ENTRY_CONTENT_TYPE);
     }
@@ -150,7 +157,8 @@ public class CreateEntryDialog extends DialogWrapper {
      * 初始化描述框
      */
     private void initEntryDesc() {
-        entryDesc = new JTextArea(CreateEntry.DESC_TEXT_PLACEHOLDER.getValue());
+        entryDesc = new EditorTextField(CreateEntry.DESC_TEXT_PLACEHOLDER.getValue());
+        entryDesc.setOneLineMode(false);
     }
 
     /**

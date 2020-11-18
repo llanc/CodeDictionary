@@ -50,6 +50,12 @@ public class ConstantsEnum {
         SHELL("shell"),
         JSON("json"),
         TXT("txt"),
+        PYTHON("python"),
+        VUE("vue"),
+        TYPESCRIPT("typescript"),
+        C("c"),
+        C_PLUS("c++"),
+        SCALA("scala"),
         ;
         private final String value;
 
