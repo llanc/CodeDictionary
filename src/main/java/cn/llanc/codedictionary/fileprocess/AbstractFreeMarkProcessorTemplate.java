@@ -48,5 +48,6 @@ public abstract class AbstractFreeMarkProcessorTemplate implements Processor{
         Object model = getModel(processorSourceData);
         Writer writer = getWriter(processorSourceData);
         template.process(model,writer);
+        writer.close();
     }
 }

@@ -65,7 +65,7 @@ public class CodeDictionaryWindow {
         entryContent.setOneLineMode(false);
         // 读取词典路径
         String dictionaryPath = SettingUtil.getDictionaryPath();
-        if (StrUtil.isBlank(dictionaryPath)) {
+        if (StrUtil.isBlank(dictionaryPath) || !GlobalUtils.isFileExists(dictionaryPath)) {
             // 加载空表格
             GlobalUtils.reBuildTableModel(null);
             initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
@@ -105,6 +105,7 @@ public class CodeDictionaryWindow {
                     String path = virtualFile.getPath();
                     String realPath = path + File.separator + FILENAME;
                     CodeDictionaryFileExporter.export(realPath);
+                    SettingUtil.saveDictionaryPath(realPath);
                 }
             }
         });
