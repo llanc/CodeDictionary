@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.4.21'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group 'cn.llanc.codedictionary'
@@ -16,7 +17,11 @@ dependencies {
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
 
 }
-
+shadowJar {
+    minimize()
+    archiveClassifier.set('')
+    archiveVersion.set('1.0.0')
+}
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version '2020.2'

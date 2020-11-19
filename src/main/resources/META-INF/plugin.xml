@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>cn.llanc.codedictionary</id>
-    <name>CodeDictionary</name>
+    <name>Code Dictionary</name>
     <vendor email="mail@llanc.cn" url="http://www.llanc.cn">llanc.cn</vendor>
 
     <description><![CDATA[
@@ -10,7 +10,8 @@
     CodeDictionary-take a "dictionary" to develop<br/>
     If you need frequent Google knowledge points in development, then this is for you.<br/>
     Record code snippets or knowledge points worth recording in daily development to help you quickly view and reuse in the future.<br/>
-    ]]></description>
+    It is recommended to use "Typora" to read the exported dictionary files.
+]]></description>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
