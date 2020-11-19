@@ -26,7 +26,7 @@
         <!-- Add your actions here -->
         <action id="CodeDictionary_PopupAction" class="cn.llanc.codedictionary.action.PopupAction" text="添加词条" description="为选中代码添加选词条">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl S"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift D"/>
         </action>
     </actions>
 </idea-plugin>
