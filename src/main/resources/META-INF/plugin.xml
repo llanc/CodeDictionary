@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>cn.llanc.codedictionary</id>
+    <id>com.github.llanc.CodeDictionary</id>
     <name>Code Dictionary</name>
-    <vendor email="mail@llanc.cn" url="http://www.llanc.cn">llanc.cn</vendor>
+    <vendor email="liulan4444@gmail.com" url="https://github.com/llanc/CodeDictionary">Code Dictionary</vendor>
 
     <description><![CDATA[
     <h2>CodeDictionary<h2>
@@ -13,8 +13,6 @@
     It is recommended to use "Typora" to read the exported dictionary files.
 ]]></description>
 
-    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
