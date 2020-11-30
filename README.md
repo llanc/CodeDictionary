@@ -1,5 +1,5 @@
 # CodeDictionary
-[![License](https://img.shields.io/jetbrains/plugin/v/15438-code-dictionary?style=flat-square)](https://plugins.jetbrains.com/plugin/1066-codedependency)
+[![License](https://img.shields.io/jetbrains/plugin/v/15438-code-dictionary?style=flat-square)](https://plugins.jetbrains.com/plugin/15438-code-dictionary)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## 简介
