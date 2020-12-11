@@ -155,6 +155,9 @@ public class CodeDictionaryFileLoader {
     private static Optional<InputStream> loadFileAsStream(Project project) {
         VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor("md"), project, null);
 
+        if (ObjectUtil.isNull(virtualFile)) {
+            return Optional.ofNullable(null);
+        }
         //设置新的默认文件地址
         SettingUtil.saveDictionaryPath(virtualFile.getPath());
 
