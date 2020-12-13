@@ -22,10 +22,8 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
-      <li>Add Entry</li>
-      <li>Export As MD File</li>
-      <li>Import MD File</li>
-      <li>Entry Query Deletion Editing</li>
+      <li>Add Logo</li>
+      <li>Fix setting big</li>
       """
 }
 
