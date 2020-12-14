@@ -1,5 +1,6 @@
 package cn.llanc.codedictionary.window;
 
+import cn.llanc.codedictionary.icons.Icons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -20,6 +21,7 @@ public class CodeDictionaryWindowFactory implements ToolWindowFactory {
         CodeDictionaryWindow codeDictionaryWindow = new CodeDictionaryWindow(project, toolWindow);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(codeDictionaryWindow.getFormPanel(), "", false);
+        toolWindow.setIcon(Icons.CodeDictionaryIcon);
         toolWindow.getContentManager().addContent(content);
     }
 }
