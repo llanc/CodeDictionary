@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.llanc.codedictionary'
-version '1.0.2'
+version '1.0.3'
 
 repositories {
     mavenCentral()
@@ -22,8 +22,7 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
-      <li>Add Logo</li>
-      <li>Fix setting big</li>
+      <li>Add ToolWindow Icon/li>
       """
 }
 
