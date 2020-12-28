@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.21'
+    id "org.jetbrains.intellij" version "0.6.5"
 }
 
 group 'com.github.llanc.codedictionary'
@@ -18,11 +18,12 @@ dependencies {
 }
 
 intellij {
-    version '2020.2'
+    version '2020.3'
 }
 patchPluginXml {
     changeNotes """
-      <li>Add ToolWindow Icon/li>
+      <li>Supported intellij version to 2020.3.</li>
+      <li>Replace deprecated Api.</li>
       """
 }
 

@@ -18,6 +18,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <toolWindow id="Code Dictionary" icon="/icons/pluginIcon.png" factoryClass="cn.llanc.codedictionary.window.CodeDictionaryWindowFactory" anchor="bottom" ></toolWindow>
+
+        <!--通知-->
+        <notificationGroup id="Plugin Code Dictionary Notification Group" displayType="balloon" key="notification.group.name"/>
     </extensions>
 
     <actions>

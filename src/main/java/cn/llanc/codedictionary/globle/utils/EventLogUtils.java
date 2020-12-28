@@ -1,10 +1,11 @@
 package cn.llanc.codedictionary.globle.utils;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.Notifications;
+import com.intellij.notification.*;
+import com.intellij.notification.impl.NotificationGroupEP;
+import com.intellij.notification.impl.NotificationGroupManagerImpl;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * EventLog日志
@@ -14,29 +15,30 @@ import com.intellij.openapi.ui.MessageType;
  **/
 public class EventLogUtils {
 
-    private static final String NOTIFICATION_GROUP_ID = "Plugin Code Dictionary";
-    private static final NotificationGroup notificationGroup = new NotificationGroup(NOTIFICATION_GROUP_ID, NotificationDisplayType.BALLOON);
+    private static final String NOTIFICATION_GROUP_ID = "Plugin Code Dictionary Notification Group";
+
+    private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID);
 
     private EventLogUtils() {
     }
 
     public static void info(String msg) {
-        Notification notification = notificationGroup.createNotification(msg, MessageType.INFO);
+        Notification notification = NOTIFICATION_GROUP.createNotification(msg, MessageType.INFO);
         Notifications.Bus.notify(notification);
     }
 
     public static void error(String msg) {
-        Notification notification = notificationGroup.createNotification(msg, MessageType.ERROR);
+        Notification notification = NOTIFICATION_GROUP.createNotification(msg, MessageType.ERROR);
         Notifications.Bus.notify(notification);
     }
 
     public static void warning(String msg) {
-        Notification notification = notificationGroup.createNotification(msg, MessageType.WARNING);
+        Notification notification = NOTIFICATION_GROUP.createNotification(msg, MessageType.WARNING);
         Notifications.Bus.notify(notification);
     }
 
-    public static void exception(String msg,Exception e) {
-        Notification notification = notificationGroup.createNotification(String.format("%s%n%s",msg,e.getMessage()), MessageType.ERROR);
+    public static void exception(String msg, Exception e) {
+        Notification notification = NOTIFICATION_GROUP.createNotification(String.format("%s%n%s", msg, e.getMessage()), MessageType.ERROR);
         Notifications.Bus.notify(notification);
     }
 }
