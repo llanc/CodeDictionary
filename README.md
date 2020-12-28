@@ -15,5 +15,5 @@
 ## 建议
 阅读导出的MD文件推荐使用Typora软件
 
-## 感谢
+## 致谢
 - <a target="_blank" href="https://github.com/looly/hutool/">HUTOOL</a>
