@@ -58,7 +58,7 @@ public class CodeDictionaryFileLoader {
      * @param fileStream
      */
     private static void dictionaryFileAnalyzer(InputStream fileStream) {
-        try (BufferedReader bufIn = new BufferedReader(new InputStreamReader(fileStream))) {
+        try (BufferedReader bufIn = new BufferedReader(new InputStreamReader(fileStream,"UTF-8"))) {
             String line;
             CodeDictionaryEntryData entryDataCache = null;
             StringBuilder contentCache = null;

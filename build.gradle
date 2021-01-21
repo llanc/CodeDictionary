@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.llanc.codedictionary'
-version '1.0.3'
+version '1.0.4'
 
 repositories {
     mavenCentral()
@@ -22,8 +22,8 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
-      <li>Supported intellij version to 2020.3.</li>
-      <li>Replace deprecated Api.</li>
+      <li>returned for compatibility with lower version.</li>
+      <li>fix utf-8 garbled</li>
       """
 }
 

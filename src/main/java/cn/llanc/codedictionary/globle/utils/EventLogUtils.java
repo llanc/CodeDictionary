@@ -17,7 +17,7 @@ public class EventLogUtils {
 
     private static final String NOTIFICATION_GROUP_ID = "Plugin Code Dictionary Notification Group";
 
-    private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID);
+    private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup(NOTIFICATION_GROUP_ID, NotificationDisplayType.BALLOON);
 
     private EventLogUtils() {
     }
