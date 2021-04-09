@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.llanc.codedictionary'
-version '1.0.4'
+version '1.0.5'
 
 repositories {
     mavenCentral()
@@ -18,12 +18,11 @@ dependencies {
 }
 
 intellij {
-    version '2020.3'
+    version '2021.1'
 }
 patchPluginXml {
     changeNotes """
-      <li>returned for compatibility with lower version.</li>
-      <li>fix utf-8 garbled</li>
+      <li>support 2021.1</li>
       """
 }
 
