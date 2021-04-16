@@ -2,19 +2,17 @@ package cn.llanc.codedictionary.window;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.llanc.codedictionary.dialog.CreateEntryDialog;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.fileprocess.loader.CodeDictionaryFileLoader;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
+import cn.llanc.codedictionary.globle.data.PluginContext;
 import cn.llanc.codedictionary.globle.utils.GlobalUtils;
 import cn.llanc.codedictionary.globle.utils.SettingUtil;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.EditorTextField;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +22,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.io.File;
 import java.util.Optional;
 
 /**
@@ -36,7 +33,7 @@ import java.util.Optional;
 public class CodeDictionaryWindow {
     private JPanel formPanel;
     private JButton importDictionary;
-    private JButton updateDictionary;
+    private JButton addEntry;
     private JButton deleteEntry;
     private JTextField entryNameQuerier;
     private JTable entryInfoTable;
@@ -47,7 +44,6 @@ public class CodeDictionaryWindow {
     private JSplitPane splitPane;
 
     private static String currentId;
-    private static final String FILENAME = "代码词典.md";
 
 
 
@@ -90,23 +86,13 @@ public class CodeDictionaryWindow {
                 initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
             }
         });
-        // 保存
-        updateDictionary.addActionListener(new ActionListener() {
+        // 新增
+        addEntry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String dictionaryPath = SettingUtil.getDictionaryPath();
-                if (StrUtil.isNotBlank(dictionaryPath) && GlobalUtils.isFileExists(dictionaryPath)) {
-                    CodeDictionaryFileExporter.export(dictionaryPath);
-                    return;
-                }
-                // 选择保存路径
-                VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, ProjectUtil.guessProjectDir(project));
-                if (ObjectUtil.isNotNull(virtualFile)) {
-                    String path = virtualFile.getPath();
-                    String realPath = path + File.separator + FILENAME;
-                    CodeDictionaryFileExporter.export(realPath);
-                    SettingUtil.saveDictionaryPath(realPath);
-                }
+
+                PluginContext context = PluginContext.builder().addProject(project).build();
+                new CreateEntryDialog(context).show();
             }
         });
         // 删除
@@ -116,6 +102,8 @@ public class CodeDictionaryWindow {
                 GlobEntryDataCache.removeById(currentId);
                 GlobalUtils.reBuildTableModel(GlobalUtils.getEntryDataAsTableFormat());
                 initTable(EntryDataCenter.ENTRY_INFO_TABLE_MODEL);
+                String dictionaryPath = SettingUtil.getDictionaryPath();
+                CodeDictionaryFileExporter.export(dictionaryPath);
             }
         });
         // 查询框
@@ -162,8 +150,15 @@ public class CodeDictionaryWindow {
                     return;
                 }
                 CodeDictionaryEntryData codeDictionaryEntryData = dataOptional.get();
-                codeDictionaryEntryData.setContent(text);
-                GlobEntryDataCache.modifyById(codeDictionaryEntryData);
+                GlobEntryDataCache.findById(codeDictionaryEntryData.getId()).ifPresent(o -> {
+                    if (!ObjectUtil.equal(o.getContent(), text)) {
+                        codeDictionaryEntryData.setContent(text);
+                        GlobEntryDataCache.modifyById(codeDictionaryEntryData);
+
+                        String dictionaryPath = SettingUtil.getDictionaryPath();
+                        CodeDictionaryFileExporter.export(dictionaryPath);
+                    }
+                });
             }
         });
     }
@@ -174,7 +169,7 @@ public class CodeDictionaryWindow {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
+
     }
 
 

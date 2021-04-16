@@ -1,10 +1,17 @@
 package cn.llanc.codedictionary.globle.utils;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
+import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -26,6 +33,11 @@ import static cn.llanc.codedictionary.globle.data.EntryDataCenter.COLUMN_NAMES;
  * @date 2020/8/14
  **/
 public class GlobalUtils {
+
+    private static final String DEFAULT_FILENAME = "Code Dictionary.md";
+    private static final String SUFFIX = ".md";
+
+
     private GlobalUtils() {
 
     }
@@ -134,7 +146,16 @@ public class GlobalUtils {
                     Vector dataVector = source.getDataVector();
                     Vector formatData = (Vector) dataVector.get(e.getFirstRow());
                     CodeDictionaryEntryData codeDictionaryEntryData = GlobalUtils.unformatEntryData(formatData);
-                    GlobEntryDataCache.modifyNameDescById(codeDictionaryEntryData);
+                    GlobEntryDataCache.findById(codeDictionaryEntryData.getId()).ifPresent(o -> {
+                        if (!ObjectUtil.equal(o.getName(), codeDictionaryEntryData.getName()) || !ObjectUtil.equal(o.getDesc(), codeDictionaryEntryData.getDesc()) ) {
+
+                            GlobEntryDataCache.modifyNameDescById(codeDictionaryEntryData);
+
+                            String dictionaryPath = SettingUtil.getDictionaryPath();
+                            CodeDictionaryFileExporter.export(dictionaryPath);
+                        }
+                    });
+
                 }
             }
         });
@@ -147,6 +168,32 @@ public class GlobalUtils {
     public static boolean isFileExists(String path) {
         File file = new File(path);
         return file.exists();
+    }
+
+    public static void initExport(Project project) {
+        initExport(project, "");
+    }
+
+    /**
+     * 导出文件
+     * @param project
+     * @param filename
+     */
+    public static void initExport(Project project, String filename) {
+        if (StrUtil.isBlank(filename)) {
+            filename = DEFAULT_FILENAME;
+        }
+        if (!filename.endsWith(SUFFIX)) {
+            filename = filename + SUFFIX;
+        }
+        // 选择保存路径
+        VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, ProjectUtil.guessProjectDir(project));
+        if (ObjectUtil.isNotNull(virtualFile)) {
+            String path = virtualFile.getPath();
+            String realPath = path + File.separator + filename;
+            CodeDictionaryFileExporter.export(realPath);
+            SettingUtil.saveDictionaryPath(realPath);
+        }
     }
 
 }

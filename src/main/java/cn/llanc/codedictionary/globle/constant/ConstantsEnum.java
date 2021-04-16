@@ -16,15 +16,15 @@ public class ConstantsEnum {
         /**
          * 弹窗标题
          */
-        TITLE("新建条目"),
+        TITLE("Add New Entry"),
         /**
          * 条目标题
          */
-        NAME_TEXT_PLACEHOLDER("--条目标题--"),
+        NAME_TEXT_PLACEHOLDER("--Title--"),
         /**
          * 条目解释
          */
-        DESC_TEXT_PLACEHOLDER("--条目解释--");
+        DESC_TEXT_PLACEHOLDER("--Description--");
 
         private final String value;
 
@@ -72,8 +72,8 @@ public class ConstantsEnum {
      * 条目类型
      */
     public enum EntryInfoTable{
-        NAME("名称"),
-        DESC("解释"),
+        NAME("Title"),
+        DESC("Description"),
         ID("id"),
         ;
         private final String value;

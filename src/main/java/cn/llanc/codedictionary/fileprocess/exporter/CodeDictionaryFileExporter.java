@@ -19,8 +19,8 @@ public class CodeDictionaryFileExporter {
         try {
             mdFreeMarkProcessor.process(processorSourceData);
         } catch (Exception exception) {
-            EventLogUtils.error("词典保存失败");
+            EventLogUtils.error("Unknown error, please try again");
         }
-        EventLogUtils.info("词典保存成功");
+        EventLogUtils.info("Saved");
     }
 }

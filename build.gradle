@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.llanc.codedictionary'
-version '1.0.5'
+version '1.1.0'
 
 repositories {
     mavenCentral()
@@ -19,11 +19,6 @@ dependencies {
 
 intellij {
     version '2021.1'
-}
-patchPluginXml {
-    changeNotes """
-      <li>support 2021.1</li>
-      """
 }
 
 tasks.withType(JavaCompile) {

@@ -3,6 +3,7 @@ package cn.llanc.codedictionary.action;
 import cn.llanc.codedictionary.dialog.CreateEntryDialog;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
+import cn.llanc.codedictionary.globle.data.PluginContext;
 import cn.llanc.codedictionary.globle.utils.GlobalUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -18,7 +19,8 @@ public class PopupAction extends AnAction {
         EntryDataCenter.ENTRY_CONTENT_TYPE = getEntryType(e);
 
         // 创建条目
-        new CreateEntryDialog().show();
+        PluginContext context = PluginContext.builder().addAnAction(e).build();
+        new CreateEntryDialog(context).show();
     }
 
     /**

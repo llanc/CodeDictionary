@@ -1,12 +1,8 @@
 package cn.llanc.codedictionary.globle.data;
 
-import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum;
 
 import javax.swing.table.DefaultTableModel;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Langel
@@ -23,7 +19,7 @@ public class EntryDataCenter {
     /**
      * 条目内容类型
      */
-    public static String ENTRY_CONTENT_TYPE;
+    public static String ENTRY_CONTENT_TYPE = ConstantsEnum.EntryType.TXT.getValue();
 
     /**
      * 列名

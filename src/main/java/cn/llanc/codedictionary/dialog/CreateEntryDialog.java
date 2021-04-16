@@ -2,10 +2,13 @@ package cn.llanc.codedictionary.dialog;
 
 import cn.hutool.core.util.StrUtil;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
+import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.globle.constant.ConstantsEnum.CreateEntry;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
+import cn.llanc.codedictionary.globle.data.PluginContext;
 import cn.llanc.codedictionary.globle.utils.GlobalUtils;
+import cn.llanc.codedictionary.globle.utils.SettingUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBColor;
@@ -14,7 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * @author Langel
@@ -43,13 +49,20 @@ public class CreateEntryDialog extends DialogWrapper {
      */
     private JTextArea entryContent;
 
+    /**
+     * 上下文
+     */
+    private PluginContext context;
+
+
 
 
     /**
      * 构造方法，指定title
      */
-    public CreateEntryDialog() {
+    public CreateEntryDialog(PluginContext context) {
         super(true);
+        this.context = context;
         init();
         setTitle(CreateEntry.TITLE.getValue());
         // 绑定事件
@@ -83,6 +96,14 @@ public class CreateEntryDialog extends DialogWrapper {
         GlobEntryDataCache.addEntry(codeDictionaryEntryData);
         EntryDataCenter.ENTRY_INFO_TABLE_MODEL.insertRow(0,getNewEntryRow(codeDictionaryEntryData));
         super.doOKAction();
+
+        //Auto Save
+        String dictionaryPath = SettingUtil.getDictionaryPath();
+        if (StrUtil.isBlank(dictionaryPath) || !GlobalUtils.isFileExists(dictionaryPath)) {
+            GlobalUtils.initExport(context.getProject());
+        }else{
+            CodeDictionaryFileExporter.export(dictionaryPath);
+        }
     }
 
     private String[] getNewEntryRow(CodeDictionaryEntryData data) {

@@ -1,4 +1,4 @@
-# 代码词典
+# Code Dictionary
 [TOC]
 <#list entryData as entry>
 ## ${entry.name}

@@ -4,14 +4,21 @@
     <vendor email="liulan4444@gmail.com" url="https://github.com/llanc/CodeDictionary">Code Dictionary</vendor>
 
     <description><![CDATA[
-    <h2>CodeDictionary<h2>
-    <a href="https://github.com/llanc/CodeDictionary">GitHub</a> | <a href="https://github.com/llanc/CodeDictionary/issues">Issues</a>
-    <br/>
-    CodeDictionary-take a "dictionary" to develop<br/>
-    If you need frequent Google knowledge points in development, then this is for you.<br/>
-    Record code snippets or knowledge points worth recording in daily development to help you quickly view and reuse in the future.<br/>
-    It is recommended to use "Typora" to read the exported dictionary files.
+    This plugin allows you to record code snippets or knowledge points that can be viewed and reused in the future. Just navigate to View > Tool >Windows > Code Dictionary to start your knowledge base in development!
+It is recommended to use "Typora" to read the exported dictionary files.
+<br>
+<a href="https://github.com/llanc/CodeDictionary">Source</a> | <a href="https://github.com/llanc/CodeDictionary/issues">Issue tracker</a>
 ]]></description>
+
+    <change-notes>
+        <![CDATA[
+            <ul>
+                <li>auto save</li>
+                <li>english UI</li>
+            </ul>
+          <br>
+        ]]>
+    </change-notes>
 
     <depends>com.intellij.modules.platform</depends>
 
@@ -22,7 +29,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="CodeDictionary_PopupAction" class="cn.llanc.codedictionary.action.PopupAction" text="添加词条" description="为选中代码添加选词条">
+        <action id="CodeDictionary_PopupAction" class="cn.llanc.codedictionary.action.PopupAction" text="Add To Code Dictionary" description="为选中代码添加选词条">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift D"/>
         </action>

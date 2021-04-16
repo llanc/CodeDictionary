@@ -21,7 +21,9 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="删除"/>
+              <font name="JetBrains Mono"/>
+              <text value="Remove"/>
+              <toolTipText value="Remove selected"/>
             </properties>
           </component>
           <hspacer id="b5987">
@@ -29,20 +31,24 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
+          <component id="40418" class="javax.swing.JButton" binding="addEntry">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="JetBrains Mono"/>
+              <text value="Add"/>
+              <toolTipText value="Add new entry"/>
+            </properties>
+          </component>
           <component id="2a6d4" class="javax.swing.JButton" binding="importDictionary">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="导入"/>
-            </properties>
-          </component>
-          <component id="40418" class="javax.swing.JButton" binding="updateDictionary">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="保存"/>
+              <font name="JetBrains Mono"/>
+              <text value="Import"/>
+              <toolTipText value="Import dictionary file"/>
             </properties>
           </component>
         </children>
@@ -75,18 +81,21 @@
                 <children>
                   <component id="96b4" class="javax.swing.JTable" binding="entryInfoTable">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <toolTipText value="Click to change"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
               <component id="4bc7f" class="javax.swing.JTextField" binding="entryNameQuerier">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
                   <text value=""/>
+                  <toolTipText value="Input title and &quot;Enter&quot;"/>
                 </properties>
               </component>
               <component id="39819" class="javax.swing.JLabel" binding="querierLabel">
@@ -94,7 +103,8 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="   条目名称"/>
+                  <font name="JetBrains Mono"/>
+                  <text value=" Search"/>
                 </properties>
               </component>
             </children>
@@ -108,7 +118,9 @@
             <children>
               <component id="6dd74" class="com.intellij.ui.EditorTextField" binding="entryContent">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <toolTipText value="Click to change"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
