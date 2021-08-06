@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.llanc.codedictionary'
-version '1.1.0'
+version '1.1.1'
 
 repositories {
     mavenCentral()
@@ -12,13 +12,13 @@ repositories {
 
 dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.12'
-    implementation 'cn.hutool:hutool-core:5.3.10'
+    implementation 'cn.hutool:hutool-core:5.7.7'
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
 
 }
 
 intellij {
-    version '2021.1'
+    version '2021.2'
 }
 
 tasks.withType(JavaCompile) {

@@ -6,6 +6,7 @@ import cn.llanc.codedictionary.dialog.CreateEntryDialog;
 import cn.llanc.codedictionary.entity.CodeDictionaryEntryData;
 import cn.llanc.codedictionary.fileprocess.exporter.CodeDictionaryFileExporter;
 import cn.llanc.codedictionary.fileprocess.loader.CodeDictionaryFileLoader;
+import cn.llanc.codedictionary.globle.constant.ConstantsEnum;
 import cn.llanc.codedictionary.globle.data.EntryDataCenter;
 import cn.llanc.codedictionary.globle.data.GlobEntryDataCache;
 import cn.llanc.codedictionary.globle.data.PluginContext;
@@ -90,8 +91,9 @@ public class CodeDictionaryWindow {
         addEntry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 PluginContext context = PluginContext.builder().addProject(project).build();
+                EntryDataCenter.ENTRY_CONTENT = "";
+                EntryDataCenter.ENTRY_CONTENT_TYPE = ConstantsEnum.EntryType.TXT.getValue();
                 new CreateEntryDialog(context).show();
             }
         });
