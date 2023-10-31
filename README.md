@@ -17,3 +17,6 @@
 
 ## 致谢
 - <a target="_blank" href="https://github.com/looly/hutool/">HUTOOL</a>
+
+## 暂停维护
+已经很久没用过了，不再维护，请选择其他优秀产品
